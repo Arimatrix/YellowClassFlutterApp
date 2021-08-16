@@ -12,6 +12,7 @@ class DatabaseHelper{
   String colId = 'id';
   String colName = 'name';
   String colDirector = 'director';
+  String colImage = 'image';
   DatabaseHelper._createInstance();
 
   factory DatabaseHelper()
@@ -40,7 +41,7 @@ class DatabaseHelper{
   void _createDb(Database db, int newVersion) async
   {
     await db.execute('CREATE TABLE $movieTable($colId INTEGER PRIMARY KEY AUTOINCREMENT, $colName TEXT,'
-        '$colDirector TEXT)');
+        '$colDirector TEXT,$colImage TEXT)');
   }
   //CRUD operations
   Future<List<Map<String,dynamic>>>getMovieMapList() async

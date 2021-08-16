@@ -1,9 +1,11 @@
 import 'package:android_projects/app_screens/form.dart';
+import 'package:android_projects/utils/Utility.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:android_projects/models/movie.dart';
 import 'package:android_projects/utils/database_helper.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:android_projects/utils/Utility.dart';
 
 
 class MovieList extends StatefulWidget {
@@ -13,10 +15,12 @@ class MovieList extends StatefulWidget {
   }
 }
 
+
 class ListState extends State<MovieList> {
   DatabaseHelper databaseHelper = DatabaseHelper();
   List<Movie> movieList;
   int count = 0;
+
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +41,7 @@ class ListState extends State<MovieList> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           debugPrint("FAB");
-          navigateToDetail(Movie('',''),'          Add Movie');
+          navigateToDetail(Movie('','',''),'          Add Movie');
         },
         child: Icon(Icons.add),
         tooltip: "Add Movie", backgroundColor: Colors.yellow,
@@ -49,7 +53,9 @@ class ListState extends State<MovieList> {
 
   ListView getListView() {
     TextStyle titleStyle = Theme.of(context).textTheme.subhead;
-    return ListView.builder(
+    return
+      ListView.builder(
+
       itemCount: count,
       itemBuilder: (BuildContext context, int position) {
         return Card(
@@ -60,8 +66,11 @@ class ListState extends State<MovieList> {
               this.movieList[position].name,
               style: titleStyle,
             ),
-            subtitle: Text(this.movieList[position].director
+            subtitle: Text(this.movieList[position].director,
+
             ),
+
+
             trailing: GestureDetector(
               child:
 
@@ -76,17 +85,19 @@ class ListState extends State<MovieList> {
             onTap: () {
               debugPrint("List Tapped");
               navigateToDetail(this.movieList[position],'           Edit Details');
-            },
+
+            }
           ),
         );
       },
     );
   }
+
   void _delete(BuildContext context,Movie movie) async
   {
     int result = await databaseHelper.deleteMovie(movie.id);
     if (result != 0) {
-      _showSnackBar(context, 'Note Deleted Successfully');
+      _showSnackBar(context, 'Movie Deleted Successfully');
       updateListView();
     }
   }
@@ -128,5 +139,6 @@ class ListState extends State<MovieList> {
               });
         });
   }
+
 }
 

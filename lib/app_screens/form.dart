@@ -1,15 +1,16 @@
 import 'package:android_projects/models/movie.dart';
+import 'package:android_projects/utils/Utility.dart';
 import 'package:android_projects/utils/database_helper.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:image_picker/image_picker.dart';
 
 class MovieForm extends StatefulWidget {
   final String appBarTitle;
   final Movie movie;
 
   MovieForm(this.movie, this.appBarTitle);
-
   @override
   State<StatefulWidget> createState() {
     return MovieState(this.movie, this.appBarTitle);
@@ -22,8 +23,23 @@ class MovieState extends State<MovieForm> {
   Movie movie;
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
+  TextEditingController ImageController = TextEditingController();
 
   MovieState(this.movie, this.appBarTitle);
+ String pickImageFromGallery() {
+    ImagePicker.pickImage(source: ImageSource.gallery).then((imgFile) {
+      String imgString = Utility.base64String(imgFile.readAsBytesSync());
+       movie.image=imgString;
+    });
+
+  }
+  getImageAsset() {
+    return Padding(
+      padding: EdgeInsets.only(left:10.0,right: 10.0,bottom:10.0, top :10.0),
+      child: Utility.imageFromBase64String(movie.image)
+    );
+        }
+
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +71,8 @@ class MovieState extends State<MovieForm> {
           children: <Widget>[
 
 
-            //Movie Name
+
+            getImageAsset(),//Movie Name
             Padding(
               padding: EdgeInsets.all(10.0),
               child: TextField(
@@ -117,6 +134,33 @@ class MovieState extends State<MovieForm> {
                         borderRadius: BorderRadius.circular(5.0),
                       ))),
             ),
+
+            //Add/Modify Image Button
+            Container(
+              margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+              width: 300.0,
+              height: 60.0,
+              child: RaisedButton(
+                color: Colors.yellow,
+                child: Text(
+                  "Add/Modify Poster",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: 'Lato',
+                      fontSize: 30.0,
+                      fontWeight: FontWeight.w300),
+                ),
+                elevation: 6.0,
+                onPressed: () {
+                  setState(() {
+                    debugPrint("Converting");
+                    pickImageFromGallery();
+
+                  });
+                },
+              ),
+            ),
             //Save Button
             Container(
               margin: EdgeInsets.only(top: 5, left: 10, right: 10, bottom: 14),
@@ -143,6 +187,7 @@ class MovieState extends State<MovieForm> {
               ),
             ),
             Container(width: 5.0),
+
             //Delete Button
             Container(
               margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
@@ -176,7 +221,9 @@ class MovieState extends State<MovieForm> {
   }
 /*
   Widget getImageAsset() {
-    AssetImage assetImage = AssetImage('images/irishman.jpeg');
+   Movie movie;
+   movie.image;
+    AssetImage assetImage = Utility.imageFromBase64String(movie.image) as AssetImage;
     Image image = Image(
       image: assetImage,
       width: 350.0,
@@ -190,12 +237,17 @@ class MovieState extends State<MovieForm> {
 
  */
 
+
   void updateTitle() {
     movie.name = titleController.text;
   }
 
   void updateDescription() {
     movie.director = descriptionController.text;
+  }
+  void updateImage()
+  {
+    movie.image = ImageController.text;
   }
 
   void _save() async {
@@ -241,4 +293,5 @@ class MovieState extends State<MovieForm> {
       _showAlertDialog('Status', 'Error');
     }
   }
+
 }
